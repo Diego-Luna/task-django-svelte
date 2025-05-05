@@ -1,31 +1,27 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
   import { fade } from 'svelte/transition';
   import type { Task } from '$lib/types';
   import { language } from '$lib/stores/language';
   import { createTranslate } from '$lib/i18n/translations';
 
   export let task: Task;
-  
-  const dispatch = createEventDispatcher<{
-    toggleStatus: { id: number, status: 'todo' | 'done' };
-    edit: Task;
-    delete: number;
-  }>();
+  export let onToggleStatus: (data: { id: number, status: 'todo' | 'done' }) => void;
+  export let onEdit: (task: Task) => void;
+  export let onDelete: (id: number) => void;
 
   $: t = createTranslate($language);
 
   function toggleStatus() {
     const newStatus = task.status === 'todo' ? 'done' : 'todo';
-    dispatch('toggleStatus', { id: task.id ?? 0, status: newStatus });
+    onToggleStatus({ id: task.id ?? 0, status: newStatus });
   }
 
   function handleEdit() {
-    dispatch('edit', task);
+    onEdit(task);
   }
 
   function handleDelete() {
-    dispatch('delete', task.id ?? 0);
+    onDelete(task.id ?? 0);
   }
 
   // Format date for better display

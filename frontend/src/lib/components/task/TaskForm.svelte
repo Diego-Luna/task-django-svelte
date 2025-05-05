@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
   import type { Task } from '$lib/types';
   import { language } from '$lib/stores/language';
   import { createTranslate } from '$lib/i18n/translations';
@@ -10,18 +9,15 @@
     status: 'todo'
   };
   export let isEditing = false;
-
-  const dispatch = createEventDispatcher<{
-    save: Partial<Task>;
-    cancel: void;
-  }>();
+  export let onSave: (task: Partial<Task>) => void;
+  export let onCancel: () => void;
   
   $: t = createTranslate($language);
 
   function handleSubmit() {
     if (!task.title?.trim()) return;
     
-    dispatch('save', {
+    onSave({
       ...task,
       title: task.title.trim(),
       description: task.description?.trim() || null
@@ -29,7 +25,7 @@
   }
 
   function handleCancel() {
-    dispatch('cancel');
+    onCancel();
   }
 </script>
 

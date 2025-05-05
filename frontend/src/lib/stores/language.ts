@@ -1,13 +1,13 @@
 import { browser } from '$app/environment';
 import { writable } from 'svelte/store';
 
-// Obtener el idioma guardado de localStorage o usar 'en' por defecto
+// Get the saved language from localStorage or use 'en' by default
 const storedLang = browser ? localStorage.getItem('language') || 'en' : 'en';
 
-// Crear un store writable con el valor inicial
+// Create a writable store with the initial value
 export const language = writable<string>(storedLang);
 
-// Suscribirse a los cambios y guardar en localStorage
+// Subscribe to changes and save to localStorage
 if (browser) {
   language.subscribe((value) => {
     localStorage.setItem('language', value);

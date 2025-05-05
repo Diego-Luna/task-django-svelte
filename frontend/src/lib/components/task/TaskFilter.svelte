@@ -1,20 +1,16 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
   import type { TaskFilter } from '$lib/types';
   import { language } from '$lib/stores/language';
   import { createTranslate } from '$lib/i18n/translations';
   
   export let activeFilter: TaskFilter = 'all';
-  
-  const dispatch = createEventDispatcher<{
-    filter: TaskFilter;
-  }>();
-  
-  function setFilter(filter: TaskFilter) {
-    dispatch('filter', filter);
-  }
+  export let onFilter: (filter: TaskFilter) => void;
   
   $: t = createTranslate($language);
+
+  function setFilter(filter: TaskFilter) {
+    onFilter(filter);
+  }
 </script>
 
 <div class="mb-6 flex flex-wrap gap-2 bg-white p-4 rounded-lg shadow-sm">

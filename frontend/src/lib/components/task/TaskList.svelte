@@ -121,13 +121,19 @@
           <TaskForm 
               task={editingTask || {}} 
               isEditing={!!editingTask?.id} 
-              on:save={handleSave} 
-              on:cancel={() => { showForm = false; editingTask = null; }} 
+              onSave={(taskData) => {
+                const event = new CustomEvent('save', { detail: taskData });
+                handleSave(event);
+              }}
+              onCancel={() => { showForm = false; editingTask = null; }} 
           />
       </div>
   {/if}
 
-  <TaskFilter activeFilter={activeFilter} on:filter={handleFilterChange} />
+  <TaskFilter activeFilter={activeFilter} onFilter={(filter) => {
+    const event = new CustomEvent('filter', { detail: filter });
+    handleFilterChange(event);
+  }} />
 
   {#if isLoading}
       <div class="flex justify-center py-12" in:fade>
@@ -149,9 +155,18 @@
               <div animate:flip={{duration: 300}}>
                   <TaskItem 
                       {task} 
-                      on:toggleStatus={handleToggleStatus} 
-                      on:edit={handleEdit} 
-                      on:delete={handleDelete}
+                      onToggleStatus={(data) => {
+                        const event = new CustomEvent('toggleStatus', { detail: data });
+                        handleToggleStatus(event);
+                      }}
+                      onEdit={(task) => {
+                        const event = new CustomEvent('edit', { detail: task });
+                        handleEdit(event);
+                      }}
+                      onDelete={(id) => {
+                        const event = new CustomEvent('delete', { detail: id });
+                        handleDelete(event);
+                      }}
                   />
               </div>
           {/each}
