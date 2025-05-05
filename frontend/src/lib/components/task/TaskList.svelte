@@ -1,4 +1,5 @@
 <script lang="ts">
+  import SecurityAlert from './SecurityAlert.svelte';
   import { onMount } from 'svelte';
   import { fade, slide, fly } from 'svelte/transition';
   import { flip } from 'svelte/animate';
@@ -108,12 +109,13 @@
   </div>
   
   {#if error}
-      <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded shadow" transition:slide>
-          <div class="flex items-center">
-              <span class="mr-2">⚠️</span>
-              {error}
-          </div>
-      </div>
+    <SecurityAlert 
+      type="error" 
+      message={error} 
+      dismissable={true}
+      autoDismiss={true} 
+      duration={5000} 
+    />
   {/if}
 
   {#if showForm}

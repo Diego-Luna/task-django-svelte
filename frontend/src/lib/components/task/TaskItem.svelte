@@ -3,6 +3,7 @@
   import type { Task } from '$lib/types';
   import { language } from '$lib/stores/language';
   import { createTranslate } from '$lib/i18n/translations';
+  import { escapeHtml } from '$lib/utils/security';
 
   export let task: Task;
   export let onToggleStatus: (data: { id: number, status: 'todo' | 'done' }) => void;
@@ -10,6 +11,10 @@
   export let onDelete: (id: number) => void;
 
   $: t = createTranslate($language);
+  
+  // Escapar contenido potencialmente peligroso
+  $: safeTitle = escapeHtml(task.title);
+  $: safeDescription = escapeHtml(task.description);
 
   function toggleStatus() {
     const newStatus = task.status === 'todo' ? 'done' : 'todo';
@@ -27,10 +32,15 @@
   // Format date for better display
   function formatDate(dateString: string | undefined): string {
     if (!dateString) return 'N/A';
-    const date = new Date(dateString);
-    
-    // Format date based on user language
-    return date.toLocaleString($language === 'fr' ? 'fr-FR' : 'en-US');
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Invalid Date';
+      
+      // Format date based on user language
+      return date.toLocaleString($language === 'fr' ? 'fr-FR' : 'en-US');
+    } catch (e) {
+      return 'Error';
+    }
   }
 </script>
 
@@ -41,11 +51,11 @@
   <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
     <div class="flex-1 min-w-0">
       <h3 class="text-lg font-medium {task.status === 'done' ? 'line-through text-gray-500' : 'text-gray-800'}">
-        {task.title}
+        {safeTitle}
       </h3>
       {#if task.description}
         <p class="text-gray-600 mt-1 {task.status === 'done' ? 'line-through' : ''}">
-          {task.description}
+          {safeDescription}
         </p>
       {/if}
       <p class="text-xs text-gray-500 mt-2">

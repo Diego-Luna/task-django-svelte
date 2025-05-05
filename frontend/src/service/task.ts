@@ -1,14 +1,24 @@
 import type { Task, TaskFilter } from '$lib/types';
+import { sanitizeInput, getCSRFToken } from '$lib/utils/security';
 
 const API_URL = 'http://localhost:8000/api';
 
 export async function fetchTasks(filter: TaskFilter = 'all'): Promise<Task[]> {
   try {
-    const url = filter !== 'all' 
-      ? `${API_URL}/tasks/?status=${filter}` 
+    // Sanitizar el parámetro de filtro
+    const safeFilter = ['all', 'todo', 'done'].includes(filter) ? filter : 'all';
+    
+    const url = safeFilter !== 'all' 
+      ? `${API_URL}/tasks/?status=${safeFilter}` 
       : `${API_URL}/tasks/`;
       
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      method: 'GET',
+      credentials: 'include', // Incluir cookies en la solicitud
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
     
     if (!response.ok) {
       throw new Error(`Error fetching tasks: ${response.statusText}`);
@@ -24,12 +34,22 @@ export async function fetchTasks(filter: TaskFilter = 'all'): Promise<Task[]> {
 
 export async function createTask(task: Omit<Task, 'id' | 'created_at' | 'updated_at'>): Promise<Task> {
   try {
+    // Sanitizar entradas de usuario
+    const sanitizedTask = {
+      ...task,
+      title: sanitizeInput(task.title) || '',
+      description: task.description ? sanitizeInput(task.description) : null
+    };
+    
     const response = await fetch(`${API_URL}/tasks/`, {
       method: 'POST',
+      credentials: 'include', // Incluir cookies
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-CSRFToken': getCSRFToken() || '' // Agregar token CSRF
       },
-      body: JSON.stringify(task),
+      body: JSON.stringify(sanitizedTask),
     });
     
     if (!response.ok) {
@@ -45,12 +65,25 @@ export async function createTask(task: Omit<Task, 'id' | 'created_at' | 'updated
 
 export async function updateTask(id: number, task: Partial<Task>): Promise<Task> {
   try {
+    // Validar el ID
+    if (!id || isNaN(id) || id <= 0) {
+      throw new Error('Invalid task ID');
+    }
+    
+    // Sanitizar entradas de usuario si existen en la actualización
+    const sanitizedTask: Partial<Task> = { ...task };
+    if (task.title !== undefined) sanitizedTask.title = sanitizeInput(task.title);
+    if (task.description !== undefined) sanitizedTask.description = task.description ? sanitizeInput(task.description) : null;
+    
     const response = await fetch(`${API_URL}/tasks/${id}/`, {
       method: 'PATCH',
+      credentials: 'include', // Incluir cookies
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-CSRFToken': getCSRFToken() || '' // Agregar token CSRF
       },
-      body: JSON.stringify(task),
+      body: JSON.stringify(sanitizedTask),
     });
     
     if (!response.ok) {
@@ -66,8 +99,17 @@ export async function updateTask(id: number, task: Partial<Task>): Promise<Task>
 
 export async function deleteTask(id: number): Promise<void> {
   try {
+    // Validar el ID
+    if (!id || isNaN(id) || id <= 0) {
+      throw new Error('Invalid task ID');
+    }
+    
     const response = await fetch(`${API_URL}/tasks/${id}/`, {
       method: 'DELETE',
+      credentials: 'include', // Incluir cookies
+      headers: {
+        'X-CSRFToken': getCSRFToken() || '' // Agregar token CSRF
+      }
     });
     
     if (!response.ok) {
