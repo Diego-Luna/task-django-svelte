@@ -8,6 +8,13 @@ declare global {
 		// interface PageState {}
 		// interface Platform {}
 	}
+
+	interface Window {
+        SpeechRecognition?: any;
+        webkitSpeechRecognition?: any;
+        mozSpeechRecognition?: any;
+        msSpeechRecognition?: any;
+    }
 }
 
 export {};

@@ -1,14 +1,22 @@
-# backend/tasks/serializers.py
 from rest_framework import serializers
 from django.core.validators import RegexValidator
+from django.contrib.auth.models import User
 from .models import Task
 import re
 import bleach
 
+class UserMinimalSerializer(serializers.ModelSerializer):
+    """Minimal user representation for embedding in Task results"""
+    class Meta:
+        model = User
+        fields = ('id', 'username')
+        read_only_fields = fields
+
 class TaskSerializer(serializers.ModelSerializer):
     """Secure serializer for Task model with input validation and sanitization"""
+    user = UserMinimalSerializer(read_only=True)
+    owner_username = serializers.CharField(source='user.username', read_only=True)
     
-    # Add custom validators
     title = serializers.CharField(
         max_length=200,
         validators=[
@@ -22,8 +30,9 @@ class TaskSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Task
-        fields = '__all__'
-        read_only_fields = ('created_at', 'updated_at')
+        fields = ['id', 'title', 'description', 'status', 'visibility', 
+                  'user', 'owner_username', 'created_at', 'updated_at']
+        read_only_fields = ('created_at', 'updated_at', 'user')
     
     def validate_title(self, value):
         """Validate and sanitize the title to prevent injection attacks"""

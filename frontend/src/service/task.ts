@@ -1,7 +1,30 @@
+
 import type { Task, TaskFilter } from '$lib/types/types';
 import { sanitizeInput, getCSRFToken } from '$lib/utils/security';
+import { auth } from '$lib/stores/auth';
+import { get } from 'svelte/store';
 
 const API_URL = 'http://localhost:8000/api';
+
+// Función auxiliar para obtener token de autenticación
+function getAuthHeaders() {
+  const authState = get(auth);
+  const headers: Record<string, string> = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+  };
+  
+  if (authState.token) {
+    headers['Authorization'] = `Bearer ${authState.token}`;
+  }
+  
+  const csrfToken = getCSRFToken();
+  if (csrfToken) {
+    headers['X-CSRFToken'] = csrfToken;
+  }
+  
+  return headers;
+}
 
 export async function fetchTasks(filter: TaskFilter = 'all'): Promise<Task[]> {
   try {
@@ -14,10 +37,8 @@ export async function fetchTasks(filter: TaskFilter = 'all'): Promise<Task[]> {
       
     const response = await fetch(url, {
       method: 'GET',
-      credentials: 'include', // Incluir cookies en la solicitud
-      headers: {
-        'Accept': 'application/json'
-      }
+      credentials: 'include',
+      headers: getAuthHeaders()
     });
     
     if (!response.ok) {
@@ -38,17 +59,15 @@ export async function createTask(task: Omit<Task, 'id' | 'created_at' | 'updated
     const sanitizedTask = {
       ...task,
       title: sanitizeInput(task.title) || '',
-      description: task.description ? sanitizeInput(task.description) : null
+      description: task.description ? sanitizeInput(task.description) : null,
+      // Si el usuario no está autenticado, forzar a global
+      visibility: get(auth).isAuthenticated ? task.visibility : 'global'
     };
     
     const response = await fetch(`${API_URL}/tasks/`, {
       method: 'POST',
       credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'X-CSRFToken': getCSRFToken() || '' // add token CSRF
-      },
+      headers: getAuthHeaders(),
       body: JSON.stringify(sanitizedTask),
     });
     
@@ -73,7 +92,6 @@ export async function updateTask(id: number, task: Partial<Task>): Promise<Task>
     // Sanitizar entradas de usuario si existen en la actualización
     const sanitizedTask: Partial<Task> = { ...task };
     
-    // Corregir esto para manejar el caso null
     if (task.title !== undefined) {
       const sanitizedTitle = sanitizeInput(task.title);
       sanitizedTask.title = sanitizedTitle !== null ? sanitizedTitle : '';
@@ -85,12 +103,8 @@ export async function updateTask(id: number, task: Partial<Task>): Promise<Task>
     
     const response = await fetch(`${API_URL}/tasks/${id}/`, {
       method: 'PATCH',
-      credentials: 'include', // Incluir cookies
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'X-CSRFToken': getCSRFToken() || '' // Agregar token CSRF
-      },
+      credentials: 'include',
+      headers: getAuthHeaders(),
       body: JSON.stringify(sanitizedTask),
     });
     
@@ -114,10 +128,8 @@ export async function deleteTask(id: number): Promise<void> {
     
     const response = await fetch(`${API_URL}/tasks/${id}/`, {
       method: 'DELETE',
-      credentials: 'include', // Incluir cookies
-      headers: {
-        'X-CSRFToken': getCSRFToken() || '' // Agregar token CSRF
-      }
+      credentials: 'include',
+      headers: getAuthHeaders()
     });
     
     if (!response.ok) {

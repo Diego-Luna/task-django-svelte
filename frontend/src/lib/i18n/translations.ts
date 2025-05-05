@@ -1,3 +1,4 @@
+// ruta: /Users/diegofranciscolunalopez/Documents/facildate/frontend/src/lib/i18n/translations.ts
 export type TranslationKey =
   | 'appTitle'
   | 'tasks'
@@ -22,7 +23,34 @@ export type TranslationKey =
   | 'error'
   | 'created'
   | 'optional'
-  | 'language';
+  | 'language'
+  | 'login'
+  | 'logout'
+  | 'register'
+  | 'username'
+  | 'password'
+  | 'confirmPassword'
+  | 'email'
+  | 'firstName'
+  | 'lastName'
+  | 'loginSuccess'
+  | 'registerSuccess'
+  | 'enterUsername'
+  | 'enterPassword'
+  | 'usernameRequired'
+  | 'passwordRequired'
+  | 'passwordsDoNotMatch'
+  | 'visibility'
+  | 'private'
+  | 'global'
+  | 'createdBy'
+  | 'myAccount'
+  | 'loginToCreatePrivate'
+  | 'profile'
+  | 'dictate'
+  | 'listening'
+  | 'speechRecognitionError'
+  | 'browserNotSupported';
 
 export type Translations = Record<TranslationKey, string>;
 
@@ -51,7 +79,34 @@ export const translations: Record<string, Translations> = {
     error: 'An error occurred',
     created: 'Created:',
     optional: 'optional',
-    language: 'Language'
+    language: 'Language',
+    login: 'Login',
+    logout: 'Logout',
+    register: 'Register',
+    username: 'Username',
+    password: 'Password',
+    confirmPassword: 'Confirm Password',
+    email: 'Email',
+    firstName: 'First Name',
+    lastName: 'Last Name',
+    loginSuccess: 'Logged in successfully',
+    registerSuccess: 'Account registered successfully',
+    enterUsername: 'Enter your username',
+    enterPassword: 'Enter your password',
+    usernameRequired: 'Username is required',
+    passwordRequired: 'Password is required',
+    passwordsDoNotMatch: 'Passwords do not match',
+    visibility: 'Visibility',
+    private: 'Private',
+    global: 'Global',
+    createdBy: 'By',
+    myAccount: 'My Account',
+    loginToCreatePrivate: 'Login to create private tasks',
+    profile: 'Profile',
+    dictate: 'Dictate',
+    listening: 'Listening...',
+    speechRecognitionError: 'Speech recognition error',
+    browserNotSupported: 'Your browser does not support speech recognition',
   },
   fr: {
     appTitle: 'Gestionnaire de Tâches',
@@ -77,7 +132,34 @@ export const translations: Record<string, Translations> = {
     error: 'Une erreur est survenue',
     created: 'Créé le:',
     optional: 'optionnel',
-    language: 'Langue'
+    language: 'Langue',
+    login: 'Connexion',
+    logout: 'Déconnexion',
+    register: 'S\'inscrire',
+    username: 'Nom d\'utilisateur',
+    password: 'Mot de passe',
+    confirmPassword: 'Confirmer le mot de passe',
+    email: 'Email',
+    firstName: 'Prénom',
+    lastName: 'Nom',
+    loginSuccess: 'Connexion réussie',
+    registerSuccess: 'Compte créé avec succès',
+    enterUsername: 'Entrez votre nom d\'utilisateur',
+    enterPassword: 'Entrez votre mot de passe',
+    usernameRequired: 'Le nom d\'utilisateur est requis',
+    passwordRequired: 'Le mot de passe est requis',
+    passwordsDoNotMatch: 'Les mots de passe ne correspondent pas',
+    visibility: 'Visibilité',
+    private: 'Privée',
+    global: 'Globale',
+    createdBy: 'Par',
+    myAccount: 'Mon Compte',
+    loginToCreatePrivate: 'Connectez-vous pour créer des tâches privées',
+    profile: 'Profil',
+    dictate: 'Dicter',
+    listening: 'Écoute...',
+    speechRecognitionError: 'Erreur de reconnaissance vocale',
+    browserNotSupported: 'Votre navigateur ne prend pas en charge la reconnaissance vocale',
   }
 };
 

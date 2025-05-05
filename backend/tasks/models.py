@@ -1,12 +1,17 @@
-# backend/tasks/models.py
 from django.db import models
 from django.core.validators import RegexValidator, MinLengthValidator, MaxLengthValidator
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.models import User
 
 class Task(models.Model):
     STATUS_CHOICES = (
         ('todo', 'To Do'),
         ('done', 'Done'),
+    )
+    
+    VISIBILITY_CHOICES = (
+        ('private', 'Private'),
+        ('global', 'Global'),
     )
     
     title = models.CharField(
@@ -35,14 +40,30 @@ class Task(models.Model):
         default='todo',
         verbose_name=_("Status")
     )
+    visibility = models.CharField(
+        max_length=7,
+        choices=VISIBILITY_CHOICES,
+        default='private',
+        verbose_name=_("Visibility")
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='tasks',
+        verbose_name=_("Owner"),
+        null=True,
+        blank=True
+    )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created at"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Last updated"))
     
     class Meta:
         ordering = ['-created_at']
         indexes = [
-            models.Index(fields=['status']),  # Add index for frequently filtered fields
+            models.Index(fields=['status']),
             models.Index(fields=['-created_at']),
+            models.Index(fields=['user']),
+            models.Index(fields=['visibility']),
         ]
         verbose_name = _("Task")
         verbose_name_plural = _("Tasks")
@@ -52,7 +73,6 @@ class Task(models.Model):
     
     def clean(self):
         """Additional validation logic"""
-        # You can add more complex validation here
         if self.title and len(self.title.strip()) < 3:
             from django.core.exceptions import ValidationError
             raise ValidationError({'title': _("Title must be at least 3 characters")})

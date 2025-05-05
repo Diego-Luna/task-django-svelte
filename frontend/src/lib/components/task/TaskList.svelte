@@ -1,15 +1,16 @@
 <script lang="ts">
   import SecurityAlert from './SecurityAlert.svelte';
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   import { fade, slide, fly } from 'svelte/transition';
   import { flip } from 'svelte/animate';
   import TaskItem from './TaskItem.svelte';
   import TaskForm from './TaskForm.svelte';
   import TaskFilter from './TaskFilter.svelte';
   import { fetchTasks, createTask, updateTask, deleteTask } from '../../../service/task';
-  import type { Task, TaskFilter as FilterType } from '$lib/types';
+  import type { Task, TaskFilter as FilterType } from '$lib/types/types';
   import { language } from '$lib/stores/language';
   import { createTranslate } from '$lib/i18n/translations';
+  import { auth } from '$lib/stores/auth';
 
   let tasks: Task[] = [];
   let isLoading = true;
@@ -19,7 +20,27 @@
   let showForm = false;
   let editingTask: Partial<Task> | null = null;
   
+  // Almacena la última autenticación conocida para compararla
+  let previousAuthState = { isAuthenticated: $auth.isAuthenticated, userId: $auth.user?.id };
+  
   $: t = createTranslate($language);
+  $: isAuthenticated = $auth.isAuthenticated;
+  
+  // Añadir un efecto para recargar tareas cuando cambie la autenticación
+  $: if ($auth.isAuthenticated !== previousAuthState.isAuthenticated || 
+         $auth.user?.id !== previousAuthState.userId) {
+    // Actualizar el estado anterior
+    previousAuthState = { 
+      isAuthenticated: $auth.isAuthenticated, 
+      userId: $auth.user?.id 
+    };
+    
+    // Recargar tareas cuando cambia la autenticación
+    if (tasks.length > 0) {
+      console.log("Autenticación cambió, recargando tareas...");
+      loadTasks();
+    }
+  }
 
   onMount(async () => {
     await loadTasks();
@@ -107,6 +128,32 @@
           {showForm ? t('cancel') : t('addTask')}
       </button>
   </div>
+  
+  <!-- Banner de autenticación para crear tareas privadas -->
+  {#if !isAuthenticated}
+    <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6 flex flex-wrap justify-between items-center gap-3">
+      <div>
+        <h3 class="font-medium text-blue-800">{$language === 'fr' ? 'Connectez-vous pour plus de fonctionnalités!' : 'Sign in for more features!'}</h3>
+        <p class="text-blue-700 text-sm mt-1">
+          {t('loginToCreatePrivate')}
+        </p>
+      </div>
+      <div class="flex gap-2">
+        <a 
+          href="/auth/login" 
+          class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+        >
+          {t('login')}
+        </a>
+        <a 
+          href="/auth/register" 
+          class="bg-white text-blue-600 border border-blue-500 px-4 py-2 rounded hover:bg-blue-50 transition-colors"
+        >
+          {t('register')}
+        </a>
+      </div>
+    </div>
+  {/if}
   
   {#if error}
     <SecurityAlert 

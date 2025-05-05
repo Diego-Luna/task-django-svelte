@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { TaskFilter } from '$lib/types';
+  import type { TaskFilter } from '$lib/types/types';
   import { language } from '$lib/stores/language';
   import { createTranslate } from '$lib/i18n/translations';
   

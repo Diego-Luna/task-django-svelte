@@ -1,11 +1,13 @@
-# Add bleach for sanitization
-bleach==6.1.0
-
-# Add these to requirements.txt
-Django==5.2
-djangorestframework==3.16.0
-django-cors-headers==4.7.0
-django-filter==25.1
+# Required packages
+Django>=5.2
+djangorestframework>=3.16.0
+django-cors-headers>=4.0.0
+django-filter>=23.0
+bleach>=6.0.0
 
 # Security packages
-django-secure==1.0.2
+django-secure>=1.0.2
+djangorestframework-simplejwt>=5.0.0
+
+# For language support
+django-modeltranslation>=0.18.0
