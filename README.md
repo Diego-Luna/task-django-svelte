@@ -1,8 +1,10 @@
-# Your Task Management Solution
+# Task Management Solution
 
-FacilDate is a sleek and modern task management app designed to make your life easier. Built with SvelteKit for the frontend and Django REST Framework for the backend, it offers a responsive interface, multilingual support, and advanced features like voice input for tasks. Whether you're managing personal to-dos or collaborating with a team, FacilDate has you covered.
+![hippo](gif/task-project.gif)
 
-## Why You'll Love FacilDate
+Task Management is a sleek and modern task management app designed to make your life easier. Built with SvelteKit for the frontend and Django REST Framework for the backend, it offers a responsive interface, multilingual support, and advanced features like voice input for tasks. Whether you're managing personal to-dos or collaborating with a team, Task Management has you covered.
+
+## Why You'll Love Task Management
 
 - 🔒 **Secure User Authentication**: Easily register, log in, and manage your profile.
 - 🌍 **Multilingual Support**: Switch seamlessly between English and French.
@@ -11,7 +13,7 @@ FacilDate is a sleek and modern task management app designed to make your life e
 - 👀 **Custom Task Visibility**: Choose between public and private tasks.
 - 🛡️ **Built-in Security**: Protects against common vulnerabilities like XSS.
 
-## How FacilDate is Organized
+## How Task Management is Organized
 
 ```
 /
@@ -34,8 +36,8 @@ Want to see how it all works? Follow these steps to get started in development m
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/facildate.git
-cd facildate
+git clone https://github.com/Diego-Luna/task-django-svelte.git
+cd task-django-svelte
 
 # Start the development environment
 docker-compose up
@@ -45,21 +47,8 @@ Once everything is up and running, you can access the app at:
 - Frontend: [http://localhost:5001](http://localhost:5001)
 - Backend API: [http://localhost:8000](http://localhost:8000)
 
-### Running in Production Mode
 
-Ready to go live? Here's how to deploy FacilDate in production:
-
-```bash
-# Build and run the app for production
-chmod +x deploy-prod.sh
-./deploy-prod.sh
-```
-
-Your app will be available at:
-- Frontend: [http://localhost:5002](http://localhost:5002)
-- Backend API: [http://localhost:8000](http://localhost:8000)
-
-## How FacilDate Works
+## How Task Management Works
 
 1. **User Authentication**:
    - Sign up via the `/auth/register` endpoint.
@@ -83,11 +72,11 @@ Your app will be available at:
 
 ---
 
-# FacilDate : Votre Solution de Gestion de Tâches
+# Task Management : Votre Solution de Gestion de Tâches
 
-FacilDate est une application moderne et élégante de gestion de tâches conçue pour simplifier votre quotidien. Avec un frontend propulsé par SvelteKit et un backend basé sur Django REST Framework, FacilDate offre une interface réactive, un support multilingue et des fonctionnalités avancées comme la saisie vocale. Que vous gériez des tâches personnelles ou collaboriez en équipe, FacilDate est là pour vous.
+Task Management est une application moderne et élégante de gestion de tâches conçue pour simplifier votre quotidien. Avec un frontend propulsé par SvelteKit et un backend basé sur Django REST Framework, Task Management offre une interface réactive, un support multilingue et des fonctionnalités avancées comme la saisie vocale. Que vous gériez des tâches personnelles ou collaboriez en équipe, Task Management est là pour vous.
 
-## Pourquoi Vous Allez Adorer FacilDate
+## Pourquoi Vous Allez Adorer Task Management
 
 - 🔒 **Authentification Sécurisée** : Inscrivez-vous, connectez-vous et gérez votre profil facilement.
 - 🌍 **Support Multilingue** : Passez sans effort de l'anglais au français.
@@ -96,7 +85,7 @@ FacilDate est une application moderne et élégante de gestion de tâches conçu
 - 👀 **Visibilité Personnalisée des Tâches** : Choisissez entre tâches publiques et privées.
 - 🛡️ **Sécurité Intégrée** : Protège contre les vulnérabilités courantes comme le XSS.
 
-## Organisation de FacilDate
+## Organisation de Task Management
 
 ```
 /
@@ -119,8 +108,8 @@ Vous voulez voir comment tout fonctionne ? Suivez ces étapes pour démarrer en 
 
 ```bash
 # Clonez le dépôt
-git clone https://github.com/votrenomdutilisateur/facildate.git
-cd facildate
+git clone https://github.com/Diego-Luna/task-django-svelte.git
+cd task-django-svelte
 
 # Démarrez l'environnement de développement
 docker-compose up
@@ -130,21 +119,8 @@ Une fois tout en place, vous pouvez accéder à l'application à :
 - Frontend : [http://localhost:5001](http://localhost:5001)
 - API Backend : [http://localhost:8000](http://localhost:8000)
 
-### Mode Production
 
-Prêt à passer en production ? Voici comment déployer FacilDate :
-
-```bash
-# Compilez et exécutez l'application pour la production
-chmod +x deploy-prod.sh
-./deploy-prod.sh
-```
-
-Votre application sera disponible à :
-- Frontend : [http://localhost:5002](http://localhost:5002)
-- API Backend : [http://localhost:8000](http://localhost:8000)
-
-## Comment FacilDate Fonctionne
+## Comment Task Management Fonctionne
 
 1. **Authentification Utilisateur** :
    - Inscrivez-vous via le endpoint `/auth/register`.
