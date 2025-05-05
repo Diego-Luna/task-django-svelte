@@ -7,6 +7,8 @@
   import TaskFilter from './TaskFilter.svelte';
   import { fetchTasks, createTask, updateTask, deleteTask } from '../../../service/task';
   import type { Task, TaskFilter as FilterType } from '$lib/types';
+  import { language } from '$lib/stores/language';
+  import { createTranslate } from '$lib/i18n/translations';
 
   let tasks: Task[] = [];
   let isLoading = true;
@@ -15,6 +17,8 @@
   
   let showForm = false;
   let editingTask: Partial<Task> | null = null;
+  
+  $: t = createTranslate($language);
 
   onMount(async () => {
     await loadTasks();
@@ -27,7 +31,7 @@
     try {
       tasks = await fetchTasks(activeFilter);
     } catch (err) {
-      error = err instanceof Error ? err.message : 'An error occurred while fetching tasks';
+      error = err instanceof Error ? err.message : t('error');
     } finally {
       isLoading = false;
     }
@@ -39,7 +43,7 @@
       await updateTask(id, { status });
       await loadTasks();
     } catch (err) {
-      error = err instanceof Error ? err.message : 'An error occurred while updating the task';
+      error = err instanceof Error ? err.message : `${t('error')} ${t('update')}`;
     }
   }
 
@@ -49,12 +53,12 @@
   }
 
   async function handleDelete(event: CustomEvent<number>) {
-    if (confirm('Are you sure you want to delete this task?')) {
+    if (confirm(t('confirmDelete'))) {
       try {
         await deleteTask(event.detail);
         await loadTasks();
       } catch (err) {
-        error = err instanceof Error ? err.message : 'An error occurred while deleting the task';
+        error = err instanceof Error ? err.message : `${t('error')} ${t('delete')}`;
       }
     }
   }
@@ -78,7 +82,7 @@
       // Reload tasks
       await loadTasks();
     } catch (err) {
-      error = err instanceof Error ? err.message : 'An error occurred while saving the task';
+      error = err instanceof Error ? err.message : `${t('error')}`;
     }
   }
 
@@ -90,7 +94,7 @@
 
 <div class="container mx-auto p-4 max-w-4xl" in:fade>
   <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-      <h1 class="text-3xl font-bold text-gray-800">Task Manager</h1>
+      <h1 class="text-3xl font-bold text-gray-800">{t('appTitle')}</h1>
     
       <button 
           on:click={() => { editingTask = null; showForm = !showForm }}
@@ -99,7 +103,7 @@
           <span class="text-lg">
               {showForm ? '✕' : '+'}
           </span>
-          {showForm ? 'Cancel' : 'Add Task'}
+          {showForm ? t('cancel') : t('addTask')}
       </button>
   </div>
   
@@ -131,12 +135,12 @@
       </div>
   {:else if tasks.length === 0}
       <div class="bg-white p-8 text-center rounded-lg shadow-md border border-gray-100" in:fade>
-          <p class="text-lg text-gray-600 mb-4">No tasks found.</p>
+          <p class="text-lg text-gray-600 mb-4">{t('noTasksFound')}</p>
           <button 
               on:click={() => { editingTask = null; showForm = true }}
               class="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg shadow transition-colors"
           >
-              Add your first task
+              {t('addFirstTask')}
           </button>
       </div>
   {:else}

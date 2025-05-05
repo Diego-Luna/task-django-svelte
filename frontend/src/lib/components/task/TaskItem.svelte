@@ -1,7 +1,9 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from 'svelte';
+  import { createEventDispatcher } from 'svelte';
   import { fade } from 'svelte/transition';
   import type { Task } from '$lib/types';
+  import { language } from '$lib/stores/language';
+  import { createTranslate } from '$lib/i18n/translations';
 
   export let task: Task;
   
@@ -10,6 +12,8 @@
     edit: Task;
     delete: number;
   }>();
+
+  $: t = createTranslate($language);
 
   function toggleStatus() {
     const newStatus = task.status === 'todo' ? 'done' : 'todo';
@@ -27,7 +31,10 @@
   // Format date for better display
   function formatDate(dateString: string | undefined): string {
     if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleString();
+    const date = new Date(dateString);
+    
+    // Format date based on user language
+    return date.toLocaleString($language === 'fr' ? 'fr-FR' : 'en-US');
   }
 </script>
 
@@ -46,7 +53,7 @@
         </p>
       {/if}
       <p class="text-xs text-gray-500 mt-2">
-        Created: {formatDate(task.created_at)}
+        {t('created')} {formatDate(task.created_at)}
       </p>
     </div>
     
@@ -61,21 +68,21 @@
         <span class="text-sm">
           {task.status === 'todo' ? '✓' : '↻'}
         </span>
-        {task.status === 'todo' ? 'Complete' : 'Reopen'}
+        {task.status === 'todo' ? t('complete') : t('reopen')}
       </button>
       
       <button 
         on:click={handleEdit}
         class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md text-sm transition-all hover:shadow-md"
       >
-        Edit
+        {t('update')}
       </button>
       
       <button 
         on:click={handleDelete}
         class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm transition-all hover:shadow-md"
       >
-        Delete
+        {t('delete')}
       </button>
     </div>
   </div>
