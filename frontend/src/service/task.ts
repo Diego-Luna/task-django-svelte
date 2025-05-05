@@ -1,4 +1,4 @@
-import type { Task, TaskFilter } from '$lib/types';
+import type { Task, TaskFilter } from '$lib/types/types';
 import { sanitizeInput, getCSRFToken } from '$lib/utils/security';
 
 const API_URL = 'http://localhost:8000/api';
@@ -43,11 +43,11 @@ export async function createTask(task: Omit<Task, 'id' | 'created_at' | 'updated
     
     const response = await fetch(`${API_URL}/tasks/`, {
       method: 'POST',
-      credentials: 'include', // Incluir cookies
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'X-CSRFToken': getCSRFToken() || '' // Agregar token CSRF
+        'X-CSRFToken': getCSRFToken() || '' // add token CSRF
       },
       body: JSON.stringify(sanitizedTask),
     });
@@ -72,8 +72,16 @@ export async function updateTask(id: number, task: Partial<Task>): Promise<Task>
     
     // Sanitizar entradas de usuario si existen en la actualización
     const sanitizedTask: Partial<Task> = { ...task };
-    if (task.title !== undefined) sanitizedTask.title = sanitizeInput(task.title);
-    if (task.description !== undefined) sanitizedTask.description = task.description ? sanitizeInput(task.description) : null;
+    
+    // Corregir esto para manejar el caso null
+    if (task.title !== undefined) {
+      const sanitizedTitle = sanitizeInput(task.title);
+      sanitizedTask.title = sanitizedTitle !== null ? sanitizedTitle : '';
+    }
+    
+    if (task.description !== undefined) {
+      sanitizedTask.description = task.description ? sanitizeInput(task.description) : null;
+    }
     
     const response = await fetch(`${API_URL}/tasks/${id}/`, {
       method: 'PATCH',
